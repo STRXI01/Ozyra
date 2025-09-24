@@ -7,6 +7,7 @@ from pyrogram.types import Message
 from Audify import app
 from Audify.misc import SUDOERS
 from Audify.utils.decorators.language import language
+from speedtest import ConfigRetrievalError, Speedtest
 
 
 def testspeed(m, _):
