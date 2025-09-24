@@ -2,7 +2,7 @@ from typing import Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from src import app
+from Audify import app
 
 
 def help_pannel(_, START: Union[bool, int] = None):
