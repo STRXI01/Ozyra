@@ -1,4 +1,3 @@
-
 import uvloop
 
 uvloop.install()
@@ -12,7 +11,7 @@ from ..logging import LOGGER
 
 class Audify(Client):
     def __init__(self):
-        LOGGER(__name__).info(f"🚀 Centralising Delta...")
+        LOGGER(__name__).info(f"🧠 Oᴘᴜs ᴀssɪsᴛᴀɴᴛ ᴇɴɢɪɴᴇ ɪɴɪᴛɪᴀʟɪᴢᴇᴅ...")
         super().__init__(
             name="Audify",
             api_id=config.API_ID,
@@ -31,27 +30,32 @@ class Audify(Client):
 
         try:
             await self.send_message(
-                chat_id=config.LOGGER_ID,
-                text=f"<u><b>✅ {self.mention} Delta Music is Ready to Vibe On.\n ID <code>{self.id}</code>\n👤 <b>as:</b> {self.name}\n🔗 <b>Username:</b> @{self.username}",
+                config.LOGGER_ID,
+                (
+                    f"<b>Bᴏᴛ ɪs ʀᴇᴀᴅʏ ᴛᴏ ᴠɪʙᴇ ᴏɴ 🍁</b>\n\n"
+                    f"• ɴᴀᴍᴇ : {self.name}\n"
+                    f"• ᴜsᴇʀɴᴀᴍᴇ : @{self.username}\n"
+                    f"• ɪᴅ : <code>{self.id}</code>"
+                ),
             )
         except (errors.ChannelInvalid, errors.PeerIdInvalid):
             LOGGER(__name__).error(
-                "❌ Failed to send startup log.\n➡️ Ensure the bot is added to the specified log group or channel."
+                "🚫 Lᴏɢɢᴇʀ ᴄʜᴀᴛ ɴᴏᴛ ᴀᴄᴄᴇssɪʙʟᴇ. ᴀᴅᴅ Bᴏᴛ ᴛʜᴇʀᴇ & ᴘʀᴏᴍᴏᴛᴇ ɪᴛ ғɪʀsᴛ."
             )
             exit()
         except Exception as ex:
             LOGGER(__name__).error(
-                f"❌ Unable to access the log group/channel..\n➡️ Reason: {type(ex).__name__}."
+                f" Fᴀɪʟᴇᴅ ᴛᴏ sᴇɴᴅ sᴛᴀʀᴛᴜᴘ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ :  {type(ex).__name__}."
             )
             exit()
 
         a = await self.get_chat_member(config.LOGGER_ID, self.id)
         if a.status != ChatMemberStatus.ADMINISTRATOR:
             LOGGER(__name__).error(
-                "⚠️ Bot is not an admin in the log group/channel.\n➡️ Please promote the bot to admin to ensure logging works properly."
+                "⚠️ Bᴏᴛ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ɪɴ ʟᴏɢɢᴇʀ ᴄʜᴀᴛ ᴛᴏ sᴇɴᴅ ʀᴇᴘᴏʀᴛs."
             )
             exit()
-        LOGGER(__name__).info(f"Kawai Is Now Online as {self.name}")
+        LOGGER(__name__).info(f" Oᴘᴜs ʙᴏᴛ ʟᴀᴜɴᴄʜᴇᴅ ᴀs {self.name}")
 
     async def stop(self):
         await super().stop()
