@@ -1,8 +1,8 @@
 import random
 from typing import Dict, List, Union, Optional
 
-from src import userbot
-from src.core.mongo import mongodb
+from Audify import userbot
+from Audify.core.mongo import mongodb
 
 authdb = mongodb.adminauth
 authuserdb = mongodb.authuser
