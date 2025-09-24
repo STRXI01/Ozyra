@@ -1,12 +1,5 @@
-# ---------------------------------------------------------
-# Audify Bot - All rights reserved
-# ---------------------------------------------------------
-# This code is part of the Audify Bot project.
-# Unauthorized copying, distribution, or use is prohibited.
-# © Graybots™. All rights reserved.
-# ---------------------------------------------------------
-
 from pyrogram.enums import ParseMode
+
 from Audify import app
 from Audify.utils.database import is_on_off
 from config import LOGGER_ID
@@ -14,30 +7,19 @@ from config import LOGGER_ID
 
 async def play_logs(message, streamtype):
     if await is_on_off(2):
-        # Safely get query text
-        if message.text:
-            parts = message.text.split(None, 1)
-            query = parts[1] if len(parts) > 1 else "No query provided"
-        else:
-            query = "No query provided"
-
         logger_text = f"""
-<b>🎧 Audify Play Log</b>
+<b>{app.mention} ᴘʟᴀʏ ʟᴏɢ</b>
 
-<b>📍 Chat Info</b>
-├ ID: <code>{message.chat.id}</code>
-├ Title: {message.chat.title}
-└ Username: @{message.chat.username if message.chat.username else 'N/A'}
+<b>ᴄʜᴀᴛ ɪᴅ :</b> <code>{message.chat.id}</code>
+<b>ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {message.chat.title}
+<b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.chat.username}
 
-<b>🙋‍♂️ User Info</b>
-├ ID: <code>{message.from_user.id}</code>
-├ Name: {message.from_user.mention}
-└ Username: @{message.from_user.username if message.from_user.username else 'N/A'}
+<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>
+<b>ɴᴀᴍᴇ :</b> {message.from_user.mention}
+<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}
 
-<b>🎵 Playback Info</b>
-├ Query: <code>{query}</code>
-└ Stream Type: <code>{streamtype}</code>
-"""
+<b>ǫᴜᴇʀʏ :</b> {message.text.split(None, 1)[1]}
+<b>sᴛʀᴇᴀᴍᴛʏᴘᴇ :</b> {streamtype}"""
         if message.chat.id != LOGGER_ID:
             try:
                 await app.send_message(
@@ -46,5 +28,6 @@ async def play_logs(message, streamtype):
                     parse_mode=ParseMode.HTML,
                     disable_web_page_preview=True,
                 )
-            except Exception:
+            except:
                 pass
+        return
