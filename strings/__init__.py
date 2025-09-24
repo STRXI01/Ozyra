@@ -6,6 +6,7 @@ import yaml
 languages = {}
 languages_present = {}
 
+LOGGERS = "Ozyra"
 
 def get_string(lang: str):
     return languages[lang]
