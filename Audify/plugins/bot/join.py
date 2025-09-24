@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForbidden
-from src import app 
+from Audify import app 
 
 MUST_JOIN_CHANNEL = "STORM_TECHH"
 SUPPORT_GROUP = "STORM_CORE"
