@@ -1,67 +1,122 @@
-import logging
-from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from pyrogram import filters, Client
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from unidecode import unidecode
 
 from Audify import app
 from Audify.misc import SUDOERS
-from Audify.utils.database import get_active_chats, get_active_video_chats
+from Audify.utils.database import (
+    get_active_chats,
+    get_active_video_chats,
+    remove_active_chat,
+    remove_active_video_chat,
+)
 
-# Setup logger
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
-CALLS_CLOSE = "calls_close"
-TIMEZONE = "Asia/Kolkata"
+async def generate_join_link(chat_id: int):
+    invite_link = await app.export_chat_invite_link(chat_id)
+    return invite_link
 
-def get_current_time():
-    try:
-        now = datetime.now(ZoneInfo(TIMEZONE))
-        return now.strftime("%d %b %Y • %I:%M %p") + " IST"
-    except Exception as e:
-        logger.exception(f"Error getting current time: {e}")
-        return "Unknown Time"
 
-def generate_summary_text(voice_count, video_count):
-    total = voice_count + video_count
-    return (
-        "<b>📡 Active Call Tracker</b>\n\n"
-        "╭─────────────⍟\n"
-        f"├ 🔊 <b>Voice Chats :</b> <code>{voice_count}</code>\n"
-        f"├ 🎥 <b>Video Chats :</b> <code>{video_count}</code>\n"
-        f"├ 📞 <b>Total Active :</b> <code>{total}</code>\n"
-        f"└ 🕒 <b>Updated :</b> <code>{get_current_time()}</code>\n"
-        "╰─────────────⍟"
+def ordinal(n):
+    suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
+    if 11 <= (n % 100) <= 13:
+        suffix = "th"
+    return str(n) + suffix
+
+
+@app.on_message(
+    filters.command(
+        ["activevc", "activevoice"], prefixes=["/"]
     )
-
-@app.on_message(filters.command(["ac", "acalls"]) & SUDOERS)
-async def active_calls(_, message: Message):
-    try:
-        voice_ids = await get_active_chats()
-        video_ids = await get_active_video_chats()
-    except Exception as e:
-        logger.exception("Error fetching active chats or video chats.")
-        return await message.reply_text("❌ Failed to fetch active calls. Check logs for details.")
-
-    try:
-        text = generate_summary_text(len(voice_ids), len(video_ids))
-        button = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("✖ Close Panel", callback_data=CALLS_CLOSE)]]
-        )
-        await message.reply_text(text, reply_markup=button)
-    except Exception as e:
-        logger.exception("Failed to send summary message.")
-        await message.reply_text("❌ Error displaying call summary.")
-
-@app.on_callback_query(filters.regex(CALLS_CLOSE) & SUDOERS)
-async def close_calls(_, query: CallbackQuery):
-    try:
-        await query.message.delete()
-        await query.answer("✅ Closed!")
-    except Exception as e:
-        logger.exception("Failed to close the inline message.")
+    & SUDOERS
+)
+async def activevc(_, message: Message):
+    mystic = await message.reply_text("⌛️")
+    served_chats = await get_active_chats()
+    text = ""
+    j = 0
+    buttons = []
+    for x in served_chats:
         try:
-            await query.answer("❌ Couldn't close the message.", show_alert=True)
+            chat_info = await app.get_chat(x)
+            title = chat_info.title
+            invite_link = await generate_join_link(x)
         except:
-            pass
+            await remove_active_chat(x)
+            continue
+        try:
+            if chat_info.username:
+                user = chat_info.username
+                text += f"<blockquote><b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]</blockquote>\n"
+            else:
+                text += (
+                    f"<blockquote><b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]</blockquote>\n"
+                )
+            button_text = f"๏ ᴊᴏɪɴ {ordinal(j + 1)} ɢʀᴏᴜᴘ ๏"
+            buttons.append([InlineKeyboardButton(button_text, url=invite_link)])
+            j += 1
+        except:
+            continue
+    if not text:
+        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+    else:
+        await mystic.edit_text(
+            f"<blockquote><b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs :</b></blockquote>\n\n{text}",
+            reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True,
+        )
+
+
+@app.on_message(
+    filters.command(
+        ["activev", "activevideo"], prefixes=["/"]
+    )
+    & SUDOERS
+)
+async def activevi_(_, message: Message):
+    mystic = await message.reply_text("⌛️")
+    served_chats = await get_active_video_chats()
+    text = ""
+    j = 0
+    buttons = []
+    for x in served_chats:
+        try:
+            chat_info = await app.get_chat(x)
+            title = chat_info.title
+            invite_link = await generate_join_link(x)
+        except:
+            await remove_active_video_chat(x)
+            continue
+        try:
+            if chat_info.username:
+                user = chat_info.username
+                text += f"<blockquote><b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]</blockquote>\n"
+            else:
+                text += (
+                    f"<blockquote><b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]</blockquote>\n"
+                )
+            button_text = f"๏ ᴊᴏɪɴ {ordinal(j + 1)} ɢʀᴏᴜᴘ ๏"
+            buttons.append([InlineKeyboardButton(button_text, url=invite_link)])
+            j += 1
+        except:
+            continue
+    if not text:
+        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+    else:
+        await mystic.edit_text(
+            f"<blockquote><b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs :</b></blockquote>\n\n{text}",
+            reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True,
+        )
+
+
+@app.on_message(filters.command(["ac"]) & SUDOERS)
+async def start(client: Client, message: Message):
+    ac_audio = str(len(await get_active_chats()))
+    ac_video = str(len(await get_active_video_chats()))
+    await message.reply_text(
+        f"<blockquote><b><u>ᴀᴄᴛɪᴠᴇ ᴄʜᴀᴛs ɪɴғᴏ</u></b> :\n\n<b>ᴠᴏɪᴄᴇ : {ac_audio}\nᴠɪᴅᴇᴏ  : {ac_video}</b></blockquote>",
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("ᴄʟᴏsᴇ 🍂", callback_data=f"close")]]
+        ),
+    )
