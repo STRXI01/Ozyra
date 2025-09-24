@@ -86,7 +86,7 @@ async def update_(client, message, _):
     )
     for info in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}"):
         updates += (
-            f"**#{info.count()}**: [{info.summary}]({REPO_}/ᴄᴏᴍᴍɪᴛ/{info}) ʙʏ {info.author}\n"
+            f"**#{info.count()}**: [{info.summary}]({REPO_}/ᴄᴏᴍᴍɪᴛ/{info})\n"
             f"  ⤷ ᴄᴏᴍᴍɪᴛᴛᴇᴅ ᴏɴ: {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} "
             f"{datetime.fromtimestamp(info.committed_date).strftime('%b')}, "
             f"{datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
