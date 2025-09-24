@@ -7,36 +7,28 @@ def start_panel(_):
     buttons = [
         [
             InlineKeyboardButton(
-                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true"
+                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true&admin=delete_messages+invite_users"
             ),
-            # Removed Support Chat button here
+            InlineKeyboardButton(text=_["S_B_2"], url=config.SUPPORT_CHAT),
         ],
     ]
     return buttons
+
 
 def private_panel(_):
     buttons = [
         [
             InlineKeyboardButton(
-                text=_["S_B_3"], url=f"https://t.me/{app.username}?startgroup=true"
-            ),
+                text=_["S_B_3"],
+                url=f"https://t.me/{app.username}?startgroup=true&admin=delete_messages+invite_users",
+            )
         ],
         [
+            InlineKeyboardButton(text=_["S_B_6"], url=config.SUPPORT_CHANNEL),
             InlineKeyboardButton(
-                text=_["S_B_4"], callback_data="settings_back_helper"
-            ),
+                text=_["S_B_13"],
+                url=f"https://t.me/{app.username}?startapp=true",
+            ),           
         ],
-        [
-            InlineKeyboardButton(
-                text=_["S_B_6"], url=config.SUPPORT_CHANNEL
-            ),
-            # Removed Support Chat button here
-        ],
-        [
-            InlineKeyboardButton(
-                text="Mini App 🎧", url=f"https://t.me/{app.username}?startapp"
-            ),
-            # Removed Source Code button here
-        ],
-    ]
+    ]      
     return buttons
