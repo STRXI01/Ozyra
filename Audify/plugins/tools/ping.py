@@ -2,7 +2,7 @@ from datetime import datetime
 from pyrogram import filters
 from pyrogram.types import Message
 from Audify import app
-from Audify.core.call import Ozyra
+from Audify.core.call import Audify
 from Audify.utils import bot_sys_stats
 from Audify.utils.decorators.language import language
 from Audify.utils.inline import supp_markup
@@ -15,7 +15,7 @@ async def ping_com(client, message: Message, _):
     start = datetime.now()
     
     pytgping, stats, response = await asyncio.gather(
-        Signal.ping(),
+        Audify.ping(),
         bot_sys_stats(),
         message.reply_text(
             _["ping_1"].format(app.mention),
