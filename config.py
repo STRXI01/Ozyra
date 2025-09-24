@@ -22,7 +22,7 @@ BOT_USERNAME = getenv("BOT_USERNAME", "StormMusicPlayer_bot")
 BOT_NAME = getenv("BOT_NAME", "Տᴛᴏʀᴍ")
 ASSUSERNAME = getenv("ASSUSERNAME", "")
 LOGGER_ID = int(getenv("LOGGER_ID", "-1002139499282"))
-BOT_LOGS_CHANNEL = int(getenv("BOT_LOGS_CHANNEL", ""))
+BOT_LOGS_CHANNEL = int(getenv("BOT_LOGS_CHANNEL", "-1002384375981"))
 
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 
