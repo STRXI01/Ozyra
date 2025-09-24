@@ -1,30 +1,20 @@
 import asyncio
-
 import speedtest
 from pyrogram import filters
 from pyrogram.types import Message
+from speedtest import ConfigRetrievalError, Speedtest
 
 from Audify import app
 from Audify.misc import SUDOERS
 from Audify.utils.decorators.language import language
-from speedtest import ConfigRetrievalError, Speedtest
 
-
-def testspeed(m, _):
-    try:
-        test = speedtest.Speedtest()
-        test.get_best_server()
-        m = m.edit_text(_["server_12"])
-        test.download()
-        m = m.edit_text(_["server_13"])
-        test.upload()
-        test.results.share()
-        result = test.results.dict()
-        m = m.edit_text(_["server_14"])
-    except Exception as e:
-        return m.edit_text(f"<code>{e}</code>")
-    return result
-
+def get_readable_file_size(size_in_bytes):
+    """Convert bytes to human-readable format"""
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size_in_bytes < 1024.0:
+            return f"{size_in_bytes:.2f} {unit}"
+        size_in_bytes /= 1024.0
+    return f"{size_in_bytes:.2f} PB"
 
 async def run_speedtest(m: Message):
     try:
