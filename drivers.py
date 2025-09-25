@@ -7,9 +7,9 @@ from rich.console import Console
 console = Console()
 
 WATCH_FOLDER = "downloads"
-BOT_TOKEN = "7928337629:AAFtHsJI5XHbGbZtkfHLF7XIdd5FjL92Cvg"
+BOT_TOKEN = ""
 
-CHAT_ID_MAIN = "-1002384375981"
+CHAT_ID_MAIN = ""
 CHAT_ID_SUPPORT = ""
 
 TEMP_FILE = "storm.json"
